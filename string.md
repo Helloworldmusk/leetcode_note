@@ -499,25 +499,443 @@ public:
 
 
 
+#### [205. 同构字符串](https://leetcode-cn.com/problems/isomorphic-strings/)
+
+难度简单374
+
+给定两个字符串 ***s*** 和 ***t\***，判断它们是否是同构的。
+
+如果 ***s*** 中的字符可以按某种映射关系替换得到 ***t\*** ，那么这两个字符串是同构的。
+
+每个出现的字符都应当映射到另一个字符，同时不改变字符的顺序。不同字符不能映射到同一个字符上，相同字符只能映射到同一个字符上，字符可以映射到自己本身。
+
+ 
+
+**示例 1:**
+
+```
+输入：s = "egg", t = "add"
+输出：true
+```
+
+**示例 2：**
+
+```
+输入：s = "foo", t = "bar"
+输出：false
+```
+
+**示例 3：**
+
+```
+输入：s = "paper", t = "title"
+输出：true
+```
+
+
+
+target: 判断是否是重构的，输出布尔值；
+
+条件： 要求是同构的；
+
+需要建立两个哈希表，建立两个方向的映射关系，因为两个方向上的映射关系不是互相的，没有理解清楚题意；要读题三遍；
+
+```cpp
+//bugfree , quick;
+class Solution {
+public:
+    bool isIsomorphic(string s, string t) 
+    {
+        if(s.size() != t.size())
+        {
+            return false;
+        }
+        std::unordered_map<char,char> hash_map1(26);
+        std::unordered_map<char,char> hash_map2(26);
+        for(int i { 0 }; i < s.size(); i++)
+        {
+            if (!hash_map1.count(s[i]) && !hash_map2.count(t[i]))
+            {
+                hash_map1[s[i]] = t[i];
+                hash_map2[t[i]] = s[i]; 
+            }
+            else if(hash_map1[s[i]] == t[i])
+            {
+                continue;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+};
+```
+
+
+
+#### [647. 回文子串](https://leetcode-cn.com/problems/palindromic-substrings/)
+
+难度中等646
+
+给定一个字符串，你的任务是计算这个字符串中有多少个回文子串。
+
+具有不同开始位置或结束位置的子串，即使是由相同的字符组成，也会被视作不同的子串。
+
+ 
+
+**示例 1：**
+
+```
+输入："abc"
+输出：3
+解释：三个回文子串: "a", "b", "c"
+```
+
+**示例 2：**
+
+```
+输入："aaa"
+输出：6
+解释：6个回文子串: "a", "a", "a", "aa", "aa", "aaa"
+```
+
+ 
+
+**提示：**
+
+- 输入的字符串长度不会超过 1000 。
+
+
+
+目标： 计算回文字符串的总个数； A ， AA, 也都算回文字符串；
+
+条件：从不同位置开始或者不同的位置结束，就算是不同的回文字符串；
+
+
+
+A , AA, ABA；
+
+计算长度： 计算以A 为中心的字符串，含有多少个回文， 计算以AA为中心的字符串含有多少个回文；
+
+初始回文长度为字符串的长度。
+
+计算总长度，计算边界， 遍历每个元素； 对每个元素执行统计操作；
+
+第一种：以A为中心，像两边扩展，如果两边相同，则回文数加1
+
+第二种，如果后一个和前一个相同，即有AA形式，则begin 和end 分别加1，来进行操作；
+
+```cpp
+//bug free, quick;
+class Solution {
+public:
+    int countSubstrings(string s) {
+        int result = s.size();
+        int left = 0;
+        int right = 0;
+        for(int i { 0 }; i < s.size(); i++)
+        {
+            left = i - 1;
+            right = i + 1;
+            while(left >= 0 &&  right < s.size() && s[left] == s[right])
+            {
+                result++;
+                left--;
+                right++;
+            }
+            left = i;
+            right = i+1;
+            while(left >= 0 &&  right < s.size() && s[left] == s[right])
+            {
+                result++;
+                left--;
+                right++;
+            }            
+        }
+        return result;
+    }
+};
+```
+
+> 官方回文思想：
+>
+> 计算有多少个回文子串的最朴素方法就是枚举出所有的回文子串，而枚举出所有的回文字串又有两种思路，分别是：
+>
+> 枚举出所有的子串，然后再判断这些子串是否是回文；
+> 枚举每一个可能的回文中心，然后用两个指针分别向左右两边拓展，当两个指针指向的元素相同的时候就拓展，否则停止拓展。
 
 
 
 
 
+#### [9. 回文数](https://leetcode-cn.com/problems/palindrome-number/)
+
+难度简单1571
+
+给你一个整数 `x` ，如果 `x` 是一个回文整数，返回 `true` ；否则，返回 `false` 。
+
+回文数是指正序（从左向右）和倒序（从右向左）读都是一样的整数。例如，`121` 是回文，而 `123` 不是。
+
+ 
+
+**示例 1：**
+
+```
+输入：x = 121
+输出：true
+```
+
+**示例 2：**
+
+```
+输入：x = -121
+输出：false
+解释：从左向右读, 为 -121 。 从右向左读, 为 121- 。因此它不是一个回文数。
+```
+
+**示例 3：**
+
+```
+输入：x = 10
+输出：false
+解释：从右向左读, 为 01 。因此它不是一个回文数。
+```
+
+**示例 4：**
+
+```
+输入：x = -101
+输出：false
+```
+
+ 
+
+**提示：**
+
+- `-231 <= x <= 231 - 1`
+
+ 
+
+**进阶：**你能不将整数转为字符串来解决这个问题吗？
 
 
 
+targe  : false or ture ;
+
+条件： 正数， 判断是否是回文；
+
+思路1：
+
+​	使用栈和队列； 除余 后 入栈和入队，然后检查出栈和出队元素是否相同；
+
+​	时间复杂度为O(N), 空间复杂度为O(N)
+
+思路2：
+
+​	元素入vector中，然后左右两边向中间聚合检查；
+
+官方思路：
+
+​	把数字从中间对折，如果两个数字相等，则认为是回文数，否则不是回文数，判断是否到中间的条件是，前半部分的数字大于后半部分的数字；
+
+```cpp
+//个人解法： bugfree, quick;
+class Solution {
+public:
+    bool isPalindrome(int x) {
+        if(x < 0)
+        {
+            return false;
+        }
+        std::vector<int> data;
+        while(x != 0)
+        {
+            data.emplace_back(x % 10);
+            x = x / 10;
+        }
+        int left = 0;
+        int right = data.size() - 1;
+        while(left < right)
+        {
+            if(data[left] != data[right])
+            {
+                return false;
+            }
+            else
+            {
+                left++;
+                right--;
+            }
+        }
+        return true;
+    }
+};
+
+//官方思路解法：
+//bugfree, quick;
+class Solution {
+public:
+    bool isPalindrome(int x) {
+        int left { x };
+        int right { 0 };
+        if(x < 0 || (x % 10 == 0 && x > 0))
+        {
+            return false;
+        }
+        while(left >= right)
+        {
+            right = right * 10 + left %10;
+            if(left == right)
+            {
+                return true;
+            }
+            left = left / 10;
+            if(left == right)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+};
+```
 
 
 
+#### [696. 计数二进制子串](https://leetcode-cn.com/problems/count-binary-substrings/)
+
+难度简单385
+
+给定一个字符串 `s`，计算具有相同数量 0 和 1 的非空（连续）子字符串的数量，并且这些子字符串中的所有 0 和所有 1 都是连续的。
+
+重复出现的子串要计算它们出现的次数。
+
+ 
+
+**示例 1 :**
+
+```
+输入: "00110011"
+输出: 6
+解释: 有6个子串具有相同数量的连续1和0：“0011”，“01”，“1100”，“10”，“0011” 和 “01”。
+
+请注意，一些重复出现的子串要计算它们出现的次数。
+
+另外，“00110011”不是有效的子串，因为所有的0（和1）没有组合在一起。
+```
+
+**示例 2 :**
+
+```
+输入: "10101"
+输出: 4
+解释: 有4个子串：“10”，“01”，“10”，“01”，它们具有相同数量的连续1和0。
+```
+
+ 
+
+**提示：**
+
+- `s.length` 在1到50,000之间。
+- `s` 只包含“0”或“1”字符。
 
 
 
+target: 目标子字符串的数量
 
+条件： 子字符串：具有相同数量的0 和 1， 且所有的0 聚集，所有的1 聚集；
 
+​			位置不同按找不同的字符循环计数；
 
+​			字符串非空；
 
+​			子字符串在原字符串中连续；
 
+思路1：以每个元素为起点，向后，遇到0 就++， 遇到1 就减减，跳出这两个循环的时候，如果结果为0， 说明是一个子串，有效字符串的数量+1， 遍历1 -> size-1 的元素；（超时了）
+
+看官方解答：
+
+>
+>
+>思路与算法
+>
+>我们可以将字符串 ss 按照 00 和 11 的连续段分组，存在 \textit{counts}counts 数组中，例如 s = 00111011s=00111011，可以得到这样的 \textit{counts}counts 数组：\textit{counts} = \{2, 3, 1, 2\}counts={2,3,1,2}。
+>
+>这里 \textit{counts}counts 数组中两个相邻的数一定代表的是两种不同的字符。假设 \textit{counts}counts 数组中两个相邻的数字为 uu 或者 vv，它们对应着 uu 个 00 和 vv 个 11，或者 uu 个 11 和 vv 个 00。它们能组成的满足条件的子串数目为 \min \{ u, v \}min{u,v}，即一对相邻的数字对答案的贡献。
+>
+>我们只要遍历所有相邻的数对，求它们的贡献总和，即可得到答案。这个实现的时间复杂度和空间复杂度都是 O(n)*O*(*n*)。
+>
+>对于某一个位置 ii，其实我们只关心 i - 1i−1 位置的 \textit{counts}counts 值是多少，所以可以用一个 \textit{last}last 变量来维护当前位置的前一个位置，这样可以省去一个 \textit{counts}counts 数组的空间。
+>
+>- 时间复杂度：O(n)*O*(*n*)。
+>- 空间复杂度：O(1)*O*(1)。
+>
+>
+
+```cpp
+//个人按照官方思路写：
+//bugfree , quick;
+class Solution {
+public:
+    int countBinarySubstrings(string s) {
+        int result { 0 };
+        int last_count { 0 };
+        int this_count { 0 };
+        char last;
+        if(s[0] == '0')
+        {
+            last = '1';
+        }
+        else
+        {
+            last = '0';
+        }
+        for (int i { 0 }; i < s.size();)
+        {
+            this_count = 0;
+            while(i < s.size() && s[i] != last  )
+            {
+                i++;
+                this_count++;
+            }
+            if(last_count > this_count)
+            {
+                result += this_count;
+            }
+            else
+            {
+                result += last_count;
+            }
+            last_count = this_count;
+            last = s[i-1];
+        }
+        return result;
+    }
+};
+
+//官方答案
+class Solution {
+public:
+    int countBinarySubstrings(string s) {
+        int ptr = 0, n = s.size(), last = 0, ans = 0;
+        while (ptr < n) {
+            char c = s[ptr];
+            int count = 0;
+            while (ptr < n && s[ptr] == c) {
+                ++ptr;
+                ++count;
+            }
+            ans += min(count, last);
+            last = count;
+        }
+        return ans;
+    }
+};
+
+其实并不需要区分是0还是1，只要区分是否连续就行了；
+```
 
 
 
