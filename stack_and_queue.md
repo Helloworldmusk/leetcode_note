@@ -180,7 +180,7 @@ myStack.empty(); // 返回 False
 - 最多调用`100` 次 `push`、`pop`、`top` 和 `empty`
 - 每次调用 `pop` 和 `top` 都保证栈不为空
 
-思路：分成主队列和辅助队列，主队列插入一个值之前，先把主队列的内容转移到 辅助队列，这时主队列为空，然后把辅助队列内容在转移到主队列，即实现了新插入的在出口，早插入的在最后;
+**思路：分成主队列和辅助队列，主队列插入一个值之前，先把主队列的内容转移到 辅助队列，这时主队列为空，然后把辅助队列内容在转移到主队列，即实现了新插入的在出口，早插入的在最后;**
 
  : 
 
@@ -253,4 +253,410 @@ private:
 };
 
 ```
+
+
+
+设计一个支持 push ，pop ，top 操作，并能在常数时间内检索到最小元素的栈。
+
+push(x) —— 将元素 x 推入栈中。
+pop() —— 删除栈顶的元素。
+top() —— 获取栈顶元素。
+getMin() —— 检索栈中的最小元素。
+
+
+示例:
+
+输入：
+["MinStack","push","push","push","getMin","pop","top","getMin"]
+[[],[-2],[0],[-3],[],[],[],[]]
+
+输出：
+[null,null,null,null,-3,null,0,-2]
+
+解释：
+MinStack minStack = new MinStack();
+minStack.push(-2);
+minStack.push(0);
+minStack.push(-3);
+minStack.getMin();   --> 返回 -3.
+minStack.pop();
+minStack.top();      --> 返回 0.
+minStack.getMin();   --> 返回 -2.
+
+
+提示：
+
+pop、top 和 getMin 操作总是在 非空栈 上调用。
+
+设计一个栈： 常数时间内可以获取到最小值；
+
+```cpp
+//自己答案 + 参考：
+//    使用双栈实现；
+
+
+class MinStack {
+public:
+    /** initialize your data structure here. */
+    MinStack() {
+
+
+    }
+    
+    void push(int val) {
+        main_stack.push(val);
+        if(min_stack.empty())
+        {
+            min_stack.push(val);
+        }
+        else if (val <= min_stack.top())
+        {
+            min_stack.push(val);
+        }
+    }
+    
+    void pop() {
+        if(!min_stack.empty() && (min_stack.top() == main_stack.top() ) )
+        {
+            min_stack.pop();
+        } 
+        main_stack.pop();
+    }
+    
+    int top() {
+        return main_stack.top();
+    }
+    
+    int getMin() {
+        return min_stack.top();
+    }
+private:
+    std::stack<int> main_stack;
+    std::stack<int> min_stack;
+};		
+
+//解法2： 使用单栈实现；
+//思路： 当有更小的值来的时候，我们只需要把之前的最小值入栈，当前更小的值再入栈即可。当这个最小值要出栈的时候，下一个值便是之前的最小值
+#include <limits.h>
+class MinStack {
+public:
+    /** initialize your data structure here. */
+    MinStack() {
+
+    }
+    
+    void push(int val) {
+        if(val <= min) 
+        { 
+            stack.push(min);
+            min = val; 
+        }
+        stack.push(val);
+    }
+    
+    void pop() {
+        if (!stack.empty())
+        {
+            if (min == stack.top())
+            {
+                stack.pop();
+                min = stack.top();
+                stack.pop();
+            }
+            else
+            {
+                stack.pop();
+            }
+        }
+    }
+    
+    int top() {
+        return stack.top();
+    }
+    
+    int getMin() {
+        return min;
+    }
+private:
+    int min = INT_MAX ;
+    std::stack<int> stack;
+};
+
+```
+
+参考： https://leetcode-cn.com/problems/min-stack/solution/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by-38/
+
+#### [20. 有效的括号](https://leetcode-cn.com/problems/valid-parentheses/)
+
+难度简单2521收藏分享切换为英文接收动态反馈
+
+给定一个只包括 `'('`，`')'`，`'{'`，`'}'`，`'['`，`']'` 的字符串 `s` ，判断字符串是否有效。
+
+有效字符串需满足：
+
+1. 左括号必须用相同类型的右括号闭合。
+2. 左括号必须以正确的顺序闭合。
+
+ 
+
+**示例 1：**
+
+```
+输入：s = "()"
+输出：true
+```
+
+**示例 2：**
+
+```
+输入：s = "()[]{}"
+输出：true
+```
+
+**示例 3：**
+
+```
+输入：s = "(]"
+输出：false
+```
+
+**示例 4：**
+
+```
+输入：s = "([)]"
+输出：false
+```
+
+**示例 5：**
+
+```
+输入：s = "{[]}"
+输出：true
+```
+
+ 
+
+**提示：**
+
+- `1 <= s.length <= 104`
+- `s` 仅由括号 `'()[]{}'` 组成
+
+
+
+思路： 使用栈，只要是左括号，就入栈，如果是右括号，就出栈，如果出栈前 栈顶元素的括号和 当前括号不是一堆，就返回错误；
+
+```cpp
+class Solution {
+public:
+    bool isValid(string s) {
+        for( auto c : s)
+        {
+            switch(c)
+            {
+                case '(': 
+                {
+                    stack.push(c);
+                    break;
+                }
+                case '{':
+                {
+                    stack.push(c);
+                    break;
+                }
+                case '[':
+                {
+                    stack.push(c);
+                    break;
+                }
+                case ')':
+                {
+                    if(!stack.empty() && stack.top() == '(')
+                    {
+                        stack.pop();
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                    break;
+                }
+                case '}':
+                {
+                    if(!stack.empty() && stack.top() == '{')
+                    {
+                        stack.pop();
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                    break;
+                }
+                case ']':
+                {
+                    if(!stack.empty() && stack.top() == '[')
+                    {
+                        stack.pop();
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                    break;
+                }
+                default: {}
+            } //switch(c):
+        } //for( auto c : s)
+        if(stack.empty())
+        {
+            return true;
+        }
+        return false;
+    } //bool isValid(string s)
+private:
+    std::stack<int> stack;
+};
+```
+
+
+
+
+
+#### [739. 每日温度](https://leetcode-cn.com/problems/daily-temperatures/)
+
+难度中等827收藏分享切换为英文接收动态反馈
+
+请根据每日 `气温` 列表 `temperatures` ，请计算在每一天需要等几天才会有更高的温度。如果气温在这之后都不会升高，请在该位置用 `0` 来代替。
+
+**示例 1:**
+
+```
+输入: temperatures = [73,74,75,71,69,72,76,73]
+输出: [1,1,4,2,1,1,0,0]
+```
+
+**示例 2:**
+
+```
+输入: temperatures = [30,40,50,60]
+输出: [1,1,1,0]
+```
+
+**示例 3:**
+
+```
+输入: temperatures = [30,60,90]
+输出: [1,1,0]
+```
+
+ 
+
+**提示：**
+
+- `1 <= temperatures.length <= 105`
+- `30 <= temperatures[i] <= 100`
+
+目的： 找到vector 中， 比当前值大的元素的索引和当前值所在的索引的差值；没有比当前元素大的，认为距离为0；
+
+方案1： 
+
+依次遍历每个元素，在后面找第一个比当前值大的元素，返回二者的差值，如果到达末尾，则返回0； 时间复杂度O(N2), 空间复杂度O(1);
+
+方案2：
+
+参考答案：
+
+​	依次将访问的元素的下标入栈，如果一个元素入栈前的值大于栈顶元素，则将栈顶元素对应的结果位置设置为 查询元素的差值 ，迭代对比栈顶元素，并且将查询元素入栈；
+
+```cpp
+//个人参考思想自己写的解法；
+#include <iostream>
+class Solution {
+public:
+    vector<int> dailyTemperatures(vector<int>& temperatures) {
+        vector<int> result;
+        std::stack<int> stack;
+        result.resize(temperatures.size(),0);
+        for(int i = 0; i < temperatures.size(); i++)
+        {
+            while( !stack.empty() && temperatures[i] > temperatures[stack.top()] )
+            {
+                result[stack.top()] = i - stack.top();
+                stack.pop();
+            }
+            stack.push(i);
+        }
+        return result;
+    }
+};
+```
+
+
+
+#### [503. 下一个更大元素 II](https://leetcode-cn.com/problems/next-greater-element-ii/)
+
+难度中等458收藏分享切换为英文接收动态反馈
+
+给定一个循环数组（最后一个元素的下一个元素是数组的第一个元素），输出每个元素的下一个更大元素。数字 x 的下一个更大的元素是按数组遍历顺序，这个数字之后的第一个比它更大的数，这意味着你应该循环地搜索它的下一个更大的数。如果不存在，则输出 -1。
+
+**示例 1:**
+
+```
+输入: [1,2,1]
+输出: [2,-1,2]
+解释: 第一个 1 的下一个更大的数是 2；
+数字 2 找不到下一个更大的数； 
+第二个 1 的下一个最大的数需要循环搜索，结果也是 2。
+```
+
+**注意:** 输入数组的长度不会超过 10000。
+
+思路：
+
+​	依次遍历数组中的元素，如果当前元素的值大于 栈顶 id对应元素的值，则将栈顶元素对应的结果索引设置为当前遍历值，否则将元素入栈； 如果 查询id == 当前id的时候， 退出；设置最多遍历两边，防止单值的vector出现循环的现象；
+
+```cpp
+//个人写法；
+#include <stack>
+class Solution {
+public:
+    vector<int> nextGreaterElements(vector<int>& nums) {
+        vector<int> result;
+        result.resize(nums.size(), -1);
+        std::stack<int> stack;
+        int cnt = 0;
+
+        for(int i =0; i < nums.size() && cnt < 2 * nums.size(); cnt++, i = (++i)%nums.size())
+        {
+            while(!stack.empty() && nums[i] > nums[stack.top()] )
+            {
+                result[stack.top()] = nums[i];
+                stack.pop();
+            }
+            if(!stack.empty() && i == stack.top()) //need review; for( 3,3,3,3,3,)这种情况；
+            {
+                return result;
+            }
+            else 
+            {
+                stack.push(i);
+            }
+        }
+        return result;
+    }
+};
+```
+
+​    **if(**!stack.empty() && i == stack.top()) //need review;**
+​        **{**
+​            **return result;**
+​        }**
+
+
+
+
+
+
+
+
 
